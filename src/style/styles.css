@@ -3,3 +3,368 @@
     margin: 0;
     box-sizing: border-box;
 }
+
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    display: flex; /* Use flexbox for main layout */
+    min-height: 100vh;
+    background-color: #f4f4f4;
+}
+ul{
+    list-style: none;
+}
+button{
+    background: none;
+    border: none;
+    color: #f4f4f4;
+}
+a{
+    text-decoration: none;
+    color: #ddd;
+}
+.on-hover{
+    display: none;
+}
+input{
+    border: none;
+    background: none;
+    width: 100%;
+    padding: 10px 0;
+}
+input:focus{
+    outline: none;
+    box-shadow: none;
+}
+li:hover .on-hover{
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem; 
+}
+.date-wrapper{
+    position: relative;
+    display: inline-block;
+}
+.date-wrapper input[type="date"]{
+    border: 1px solid #ccc;
+    padding: 5px 8px;
+    font-size: 12px;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+.date-wrapper span{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  pointer-events: none; /* allow clicking input underneath */
+  color: #555;
+}
+#btn-cancel{
+    background: #fff;
+    color: #000;
+}
+
+
+.todo-content {
+    flex-grow: 1;
+}
+
+.todo-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.todo-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.todo-description {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+    display: none; /* Hidden by default, shown when expanded */
+}
+
+.todo-project {
+    font-size: 0.8em;
+    color: #888;
+    font-style: italic;
+}
+
+.todo-actions {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.todo-expand-btn,
+.todo-delete-btn {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #666;
+}
+
+.todo-expand-btn:hover,
+.todo-delete-btn:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.todo-delete-btn:hover {
+    background: #ffe6e6;
+    color: #d63031;
+}
+
+/* Expanded state */
+.todo-item.expanded .todo-description {
+    display: block;
+}
+
+.todo-item.expanded {
+    padding: 20px 15px;
+}
+
+/* Active sidebar item */
+.sidebar__nav-item.active {
+    background-color: #007bff;
+}
+
+.sidebar__nav-item.active a {
+    color: white;
+}
+
+/* Modal improvements */
+.model__inner-element select {
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 4px;
+    background: white;
+}
+
+.model__inner-element label {
+    font-size: 0.9em;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+
+
+
+.model{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* opacity: 0;
+    visibility: hidden;
+    transform: scale(1.1);
+    transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s; */
+}
+.model__content{
+    width: min(600px, 90%);
+    background-color: #f8f8f8;
+    padding: 1em;
+    border-radius: 6px;
+
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.model__inner{
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    gap: 1em;
+}
+.model__inner-element{
+    /* border: 1px solid #ccc;
+    padding: 5px 8px;
+    font-size: 12px;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer; */
+}
+.model__footer-btn{
+    background-color: #333;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#sidebar {
+    width: 250px;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+
+    
+
+}
+.sidebar__nav{
+  display: flex;
+    flex-direction: column;
+    gap: 2em;
+    margin-top: 1em;
+}
+.sidebar__nav-list{
+     display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.sidebar__nav-item.inline{
+    display: flex;
+    justify-content: space-between;
+}
+
+#sidebar h2 {
+    margin-top: 0;
+    color: #eee;
+}
+
+
+
+#project-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.sidebar__nav-item {
+    padding: 10px 10px;
+    cursor: pointer;
+    /* border-bottom: 1px solid #444; */
+    transition: background-color 0.2s ease;
+    border-radius: 6px;
+}
+
+.sidebar__nav-item:hover {
+    background-color: #555;
+}
+
+.sidebar__nav-item.active {
+    background-color: #007bff; /* Highlight active project */
+    font-weight: bold;
+}
+
+#add-project-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 20px;
+}
+
+#add-project-btn:hover {
+    background-color: #218838;
+}
+
+
+#main-content {
+    flex-grow: 1; /* Takes up remaining space */
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+#current-project-title {
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+#todo-list {
+    list-style: none;
+    padding: 0;
+}
+
+.todo-item {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: box-shadow 0.2s ease;
+}
+
+.todo-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.todo-title {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.todo-due-date {
+    font-size: 0.9em;
+    color: #666;
+    margin-left: 20px;
+}
+
+/* Priority Styling */
+.priority-high {
+    border-left: 5px solid #dc3545; /* Red */
+}
+
+.priority-medium {
+    border-left: 5px solid #ffc107; /* Yellow/Orange */
+}
+
+.priority-low {
+    border-left: 5px solid #17a2b8; /* Blue/Cyan */
+}
+
+/* Completed Todo Styling */
+.todo-item.completed {
+    opacity: 0.6;
+    text-decoration: line-through;
+    background-color: #e9ecef;
+}
+
+#add-todo-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 20px;
+}
+
+#add-todo-btn:hover {
+    background-color: #0056b3;
+}

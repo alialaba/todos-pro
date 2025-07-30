@@ -1,13 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Todos Pro</title>
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@7.3.67/css/materialdesignicons.min.css"
+    />
+  </head>
+  <body>
+    <!-- <h1>Todos Pro</h1> -->
 
-    <h1>Todos Pro</h1>
-    
-</body>
+    <aside id="sidebar">
+      <div class="sidebar__header">
+        <h4>TaskPro</h4>
+      </div>
+      <nav class="sidebar__nav">
+        <ul class="task-list sidebar__nav-list">
+          <li class="sidebar__nav-item">
+            <button id="add-task" class="sidebar__nav-list--item">
+              <span class="mdi mdi-plus"></span>
+              <span>Add Task</span>
+            </button>
+          </li>
+
+          <li class="sidebar__nav-item">
+            <a href="#" class="sidebar__nav-list--item">
+              <span class="mdi mdi-calendar-text"></span>
+              <span>All Tasks</span>
+            </a>
+          </li>
+
+          <li class="sidebar__nav-item">
+            <a href="#" class="sidebar__nav-list--item">
+              <span class="mdi mdi-calendar-today"></span>
+              <span>Today</span>
+            </a>
+          </li>
+          <li class="sidebar__nav-item">
+            <a href="#" class="sidebar__nav-list--item">
+              <span class="mdi mdi-home"></span>
+              <span>Upcoming</span>
+            </a>
+          </li>
+
+          <li class="sidebar__nav-item">
+            <a href="#" class="sidebar__nav-list--item">
+              <span class="mdi mdi-check-circle-outline"></span>
+              <span>Completed Task</span>
+            </a>
+          </li>
+        </ul>
+        <ul id="project-list sidebar__nav-list">
+          <li class="sidebar__nav-item inline">
+            <h5>Projects</h5>
+            <div class="on-hover inline">
+              <span class="mdi mdi-plus" id="add-project"></span>
+              <span class="mdi mdi-chevron-down"></span>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div id="main-content">
+      <h1 id="current-project-title">All Tasks</h1>
+      <div class="model" id="task-model" style="display: none;">
+        <div class="model__content">
+          <input type="text" id="title" placeholder="Write your new task" />
+          <input type="text" id="desc" placeholder="Description" />
+          <div class="model__inner">
+            <div class="model__inner-element date-wrapper">
+              <input type="date" id="date" />
+              <span class="mdi mdi-calendar"></span>
+            </div>
+            <div class="model__inner-element">
+              <label>Priority</label>
+              <select id="priority" name="priority">
+                <option value="" disabled selected hidden>Priority</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+              <span class="mdi mdi-flag-outline"></span>
+            </div>
+             <div class="model__inner-element">
+              <label>Project</label>
+              <select id="task-project" name="project">
+                <option value="" disabled selected hidden>Select Project</option>
+              </select>
+              <span class="mdi mdi-folder"></span>
+            </div>
+          </div>
+          <div class="model__footer">
+            <button class="model__footer-btn" id="btn-cancel">Cancel</button>
+            <button class="model__footer-btn" id="btn-add">Add Task</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="model" id="project-modal" style="display: none;">
+        <div class="model__content">
+          <h3>Create New Project</h3>
+          <input type="text" placeholder="Project Name" id="project-name" />
+          <div class="model__inner">
+            <div class="model__inner-element">
+              <label>Color</label>
+              <select id="project-color" name="color">
+                <option value="" disabled selected hidden>Select Color</option>
+                <option value="blue" style="color: #007bff;">Blue</option>
+                <option value="green" style="color: #28a745;">Green</option>
+                <option value="red" style="color: #dc3545;">Red</option>
+                <option value="purple" style="color: #6f42c1;">Purple</option>
+                <option value="orange" style="color: #fd7e14;">Orange</option>
+                <option value="teal" style="color: #20c997;">Teal</option>
+              </select>
+              <span class="mdi mdi-palette"></span>
+            </div>
+          </div>
+          <div class="model__footer">
+            <button class="model__footer-btn" id="btn-cancel-project">Cancel</button>
+            <button class="model__footer-btn" id="btn-add-project">Create Project</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
