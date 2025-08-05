@@ -1,12 +1,30 @@
+// src/modules/appLogic.js
 import { Todo } from "./todo.js";
 import { Project } from "./project.js";
 let projects = []; // This array will hold all your project objects
 
+function ensureDefaultProject() {
+    // Check if we have any projects
+    if (projects.length === 0) {
+        const defaultProject = new Project("Default", "blue");
+        projects.push(defaultProject);
+        return defaultProject;
+    }
+    
+    // Check if we have a "Default" project
+    const defaultProject = projects.find(p => p.name === "Default");
+    if (!defaultProject) {
+        const newDefaultProject = new Project("Default", "blue");
+        projects.unshift(newDefaultProject); // Add at the beginning
+        return newDefaultProject;
+    }
+    
+    return defaultProject;
+}
+
 function initializeAppData() {
   // First, try to load from local storage
-  // (This part will be implemented fully on Day 4)
-  // For now, let's assume no data is loaded and we need to create default
-  const loadedProjects = loadProjectsFromLocalStorage(); // Placeholder for Day 4
+  const loadedProjects = loadProjectsFromLocalStorage();
 
   if (loadedProjects && loadedProjects.length > 0) {
     // If data exists in local storage, use it
@@ -18,16 +36,20 @@ function initializeAppData() {
     createDefaultData();
   }
 
+  // Ensure we always have a default project
+  ensureDefaultProject();
+
   // Return the current state of projects
   return projects;
 }
 
 function createDefaultData() {
-  // 1. Create the "Default Project" instance
-  const defaultProject = new Project("Default Project", "blue");
+  // 1. Create the "Default" project instance (changed from "Default Project")
+  const defaultProject = new Project("Default", "blue");
   projects.push(defaultProject); // Add it to your main projects array
 
   // 2. Create sample Todo items
+  /*
   const todo1 = new Todo(
     "Organize Desk",
     "Clear out old papers, clean the monitor, and arrange stationery.",
@@ -64,24 +86,24 @@ function createDefaultData() {
       { item: "Run a build", completed: false },
     ]
   );
-
+*/
   // 3. Add these sample todos to the default project
-  defaultProject.addTodo(todo1);
-  defaultProject.addTodo(todo2);
-  defaultProject.addTodo(todo3);
-  defaultProject.addTodo(todo4);
+  // defaultProject.addTodo(todo1);
+  // defaultProject.addTodo(todo2);
+  // defaultProject.addTodo(todo3);
+  // defaultProject.addTodo(todo4);
 
   // You might also want a second sample project
-  const workProject = new Project("Work Tasks", "green");
-  projects.push(workProject);
+  // const workProject = new Project("Work Tasks", "green");
+  // projects.push(workProject);
 
-  const workTodo1 = new Todo(
-    "Prepare Q3 Report",
-    "Gather data from sales, marketing, and finance departments.",
-    "2025-08-15",
-    "high"
-  );
-  workProject.addTodo(workTodo1);
+  // const workTodo1 = new Todo(
+  //   "Prepare Q3 Report",
+  //   "Gather data from sales, marketing, and finance departments.",
+  //   "2025-08-15",
+  //   "high"
+  // );
+  // workProject.addTodo(workTodo1);
 
   // Save this initial data to local storage immediately
   // (This part will be implemented fully on Day 4)
@@ -145,7 +167,6 @@ function setTodoCompleted(projectId, todoId, status) {
         const todo = project.getTodoId(todoId); // Fixed method name
         if(todo){
             todo.completed = status; // Direct assignment or use todo.toggleCompletion()
-            // In Day 4, you'll add: saveProjectsToLocalStorage(projects);
             return true;
         }
     }
@@ -161,7 +182,6 @@ function changeTodoPriority(projectId, todoId, newPriority) {
 
         if(todo){
             todo.setPriority(newPriority); // Using the method defined in Todo class
-            // In Day 4, you'll add: saveProjectsToLocalStorage(projects);
             return true;
         }
     }
@@ -171,7 +191,6 @@ function changeTodoPriority(projectId, todoId, newPriority) {
 function createProject(projectName, projectColor = "blue") {
     const newProject = new Project(projectName, projectColor);
     projects.push(newProject);
-    // In Day 4, you'll add: saveProjectsToLocalStorage(projects);
     return newProject; // Return the new project for UI updates
 }
 
@@ -220,4 +239,5 @@ export {
   changeTodoPriority,
   createProject,
   moveTaskToProject,
+  ensureDefaultProject,
 };

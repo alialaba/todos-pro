@@ -68,16 +68,16 @@
       <h1 id="current-project-title">All Tasks</h1>
       <div class="model" id="task-model" style="display: none;">
         <div class="model__content">
-          <input type="text" id="title" placeholder="Write your new task" />
-          <input type="text" id="desc" placeholder="Description" />
+          <input type="text" id="task-title" placeholder="Write your new task" />
+          <input type="text" id="task-desc" placeholder="Description" />
           <div class="model__inner">
             <div class="model__inner-element date-wrapper">
-              <input type="date" id="date" />
-              <span class="mdi mdi-calendar"></span>
+              <input type="date" id="task-date" />
+              <!-- <span class="mdi mdi-calendar"></span> -->
             </div>
             <div class="model__inner-element">
               <label>Priority</label>
-              <select id="priority" name="priority">
+              <select id="task-priority" name="priority">
                 <option value="" disabled selected hidden>Priority</option>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>

@@ -69,15 +69,19 @@ li:hover .on-hover{
 
 
 .todo-content {
-    flex-grow: 1;
+    /* flex-grow: 1; */
 }
 
-.todo-header {
+.todo-item:hover .todo-actions{
+  visibility: visible;
+}
+
+/* .todo-header {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 5px;
-}
+} */
 
 .todo-checkbox {
     width: 18px;
@@ -86,10 +90,12 @@ li:hover .on-hover{
 }
 
 .todo-description {
-    font-size: 0.9em;
+    /* font-size: 0.9em;
     color: #666;
     margin-bottom: 5px;
-    display: none; /* Hidden by default, shown when expanded */
+    display: none;  */
+    
+    /* Hidden by default, shown when edited */
 }
 
 .todo-project {
@@ -102,9 +108,11 @@ li:hover .on-hover{
     display: flex;
     gap: 5px;
     align-items: center;
+    visibility: hidden;
+    justify-content: start;
 }
 
-.todo-expand-btn,
+.todo-edit-btn,
 .todo-delete-btn {
     background: #f0f0f0;
     border: 1px solid #ddd;
@@ -118,7 +126,7 @@ li:hover .on-hover{
     color: #666;
 }
 
-.todo-expand-btn:hover,
+.todo-edit-btn:hover,
 .todo-delete-btn:hover {
     background: #e0e0e0;
     color: #333;
@@ -129,14 +137,14 @@ li:hover .on-hover{
     color: #d63031;
 }
 
-/* Expanded state */
-.todo-item.expanded .todo-description {
+/* edited state */
+/* .todo-item.edited .todo-description {
     display: block;
-}
+} */
 
-.todo-item.expanded {
+/* .todo-item.edited {
     padding: 20px 15px;
-}
+} */
 
 /* Active sidebar item */
 .sidebar__nav-item.active {
@@ -292,6 +300,7 @@ li:hover .on-hover{
     padding: 20px;
     background-color: white;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+    width: 600px;
 }
 
 #current-project-title {
@@ -307,8 +316,8 @@ li:hover .on-hover{
 }
 
 .todo-item {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
+    /* background-color: #f9f9f9; */
+    border-bottom: 1px solid #ddd;
     border-radius: 5px;
     margin-bottom: 10px;
     padding: 15px;
@@ -316,6 +325,19 @@ li:hover .on-hover{
     justify-content: space-between;
     align-items: center;
     transition: box-shadow 0.2s ease;
+}
+
+.todo-project-name{
+    font-size: 0.8rem;
+}
+.todo-header{
+    display: flex;
+    gap: .5em;
+    margin-bottom: .5em;
+}
+.todo-footer{
+    display: flex;
+    flex-direction: column;
 }
 
 .todo-item:hover {
