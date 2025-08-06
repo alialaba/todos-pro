@@ -270,11 +270,17 @@ function createTodoElement(todo) {
   const li = document.createElement("li");
   li.className = `todo-item priority-${todo.priority.toLowerCase()}`;
 
+  if(todo.completed){
+    li.classList.add("completed");
+  }
+
   // console.log(li)
   li.innerHTML = `
   <div class="todo-content">
    <div class="todo-header">
-    <input type="checkbox"  class="todo-checkbox"/>
+    <input type="checkbox"  class="todo-checkbox" ${
+      todo.completed ? "checked" : ""
+    } data-todo-id="${todo.id}" data-project-id="${todo.projectId}"/>
         <p class="todo-title">${todo.title}</p>
    </div>
     <div class="todo-footer">
@@ -287,14 +293,41 @@ function createTodoElement(todo) {
      <span class="mdi mdi-pencil"></span>
    </button>
 
-    <button class="todo-delete-btn" >
+    <button class="todo-delete-btn" data-todo-id="${todo.id}"  data-project-id="${todo.projectId}">
       <span class="mdi mdi-delete"></span>
    </button>
 
    </div>
   `;
 
+const todoCheckbox = li.querySelector(".todo-checkbox");
+const todoDelBtn = li.querySelector(".todo-delete-btn");
+
+todoCheckbox.addEventListener("change", handleTodoToggle)
+todoDelBtn.addEventListener("click", handleTodoDelete)
+
   return li;
+}
+
+
+
+function handleTodoToggle(e){
+
+  const todoId = e.target.dataset.todoId;
+  const projectId = e.target.dataset.projectId
+  const checked = e.target.checked;
+  setTodoCompleted(projectId, todoId, checked);
+  refreshCurrentView()
+
+}
+
+function handleTodoDelete(e) {
+  const projectId = e.target.closest(".todo-delete-btn").dataset.projectId;
+  const todoId = e.target.closest(".todo-delete-btn").dataset.todoId;
+  if(confirm("Are you sure you want to delete this Task?")){
+    deleteTodo(projectId, todoId);
+    refreshCurrentView()
+  }
 }
 
 function refreshCurrentView() {
