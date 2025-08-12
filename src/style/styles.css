@@ -37,7 +37,7 @@ input:focus{
     outline: none;
     box-shadow: none;
 }
-li:hover .on-hover{
+.project-header:hover .on-hover{
     display: flex;
     flex-direction: row;
     gap: 0.25rem; 
@@ -310,13 +310,18 @@ li:hover .on-hover{
     margin-bottom: 20px;
 }
 
-#todo-list {
+.todo-list, .project-list {
     list-style: none;
     padding: 0;
+    margin: 2em 0;
 }
 
-.todo-item {
-    /* background-color: #f9f9f9; */
+/* Toggle project list visibility */
+.hidden-project{
+    visibility: hidden;
+}
+ .todo-item {
+    background-color: #f9f9f9;
     border-bottom: 1px solid #ddd;
     border-radius: 5px;
     margin: 10px 0;
@@ -327,6 +332,22 @@ li:hover .on-hover{
     transition: box-shadow 0.2s ease;
 }
 
+.project-item{
+     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+/* Active sidebar project item */
+.project-item.active {
+    background-color: #007bff;
+}
+
+.project-item.active a {
+    color: white;
+}
 .todo-project-name{
     font-size: 0.8rem;
 }

@@ -52,15 +52,22 @@
             </a>
           </li>
         </ul>
-        <ul id="project-list sidebar__nav-list">
-          <li class="sidebar__nav-item inline">
+        <div id="sidebar__nav-list">
+            <div class="project-header sidebar__nav-item inline">
             <h5>Projects</h5>
             <div class="on-hover inline">
               <span class="mdi mdi-plus" id="add-project"></span>
-              <span class="mdi mdi-chevron-down"></span>
+              <span class="mdi mdi-chevron-right" id="toggle-project"></span>
             </div>
-          </li>
-        </ul>
+          </div>
+          <ul id="project-list" class="project-list hidden-project" >
+            <!-- <li class="project-item">
+              <span class="project-item__text"></span>
+            </li> -->
+
+          </ul>
+          
+        </div>
       </nav>
     </aside>
 

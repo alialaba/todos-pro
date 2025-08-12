@@ -19,6 +19,8 @@ const addProject = document.querySelector("#add-project");
 const cancelProjectBtn = document.querySelector("#btn-cancel-project");
 const createProjectBtn = document.querySelector("#btn-add-project");
 const currentProjectTitle = document.querySelector("#current-project-title");
+const toggleProject = document.querySelector("#toggle-project");
+  const projectList = document.querySelector("#project-list");
 
 let currentView = ""; // Track current view: "all", "today", "upcoming", "completed", or project ID
 let currentProjectId = null;
@@ -26,11 +28,15 @@ let currentProjectId = null;
 export function initializeDOM() {
   setupEventListeners();
   populateProjectSelect();
+  //  renderProjectItem()
 }
 
 function setupEventListeners() {
   addProject.addEventListener("click", showProjectModal);
   cancelProjectBtn.addEventListener("click", hideProjectModal);
+  createProjectBtn.addEventListener("click",  handleCreateProject);
+
+
 
   addBtn.addEventListener("click", showTaskModal);
   cancelBtn.addEventListener("click", hideTaskModal);
@@ -44,6 +50,16 @@ function setupEventListeners() {
   projectModal.addEventListener("click", (e) => {
     if (e.target === projectModal) hideProjectModal();
   });
+
+
+    // toggleProject.addEventListener("click", showToggleProjectItem);
+  // toggleProject.addEventListener("click", ()=>{
+  //   const isNavRight = toggleProject.classList.contains("mdi-chevron-right");
+  //     toggleProject.classList.toggle("mdi-chevron-right", !isNavRight);
+  //     toggleProject.classList.toggle("mdi-chevron-down", isNavRight)
+  // })
+
+  toggleProject.addEventListener("click", showToggleProjectItem)
 }
 
 function showTaskModal() {
@@ -73,7 +89,7 @@ function clearTaskModalInputs() {
     if (field.type === "date") {
       field.value = "";
     } else {
-      field = "";
+      field.value = "";
     }
   });
 }
@@ -85,25 +101,38 @@ function clearProjectModalInputs() {
   });
 }
 
+
+function showToggleProjectItem(){
+
+    //  console.log("clicked")
+    const isNavRight = toggleProject.classList.contains("mdi-chevron-right");
+
+    toggleProject.classList.toggle("mdi-chevron-right", !isNavRight);
+    toggleProject.classList.toggle("mdi-chevron-down", isNavRight)
+    projectList.classList.toggle("hidden-project")
+}
+
 function populateProjectSelect() {
   const projectSelect = document.querySelector("#task-project");
   if (!projectSelect) return;
 
   // Ensure we have at least a Default project
   ensureDefaultProject();
+  renderProjectItem()
+  
   const projects = getAllProjects();
 
   // Clear existing options
   projectSelect.innerHTML = "";
 
   // Add a placeholder option
-  const placeholderOption = document.createElement("option");
-  placeholderOption.value = "";
-  placeholderOption.textContent = "Select Project";
-  placeholderOption.disabled = true;
-  placeholderOption.selected = false;
-  placeholderOption.hidden = true;
-  projectSelect.appendChild(placeholderOption);
+  // const placeholderOption = document.createElement("option");
+  // placeholderOption.value = "";
+  // placeholderOption.textContent = "Select Project";
+  // placeholderOption.disabled = true;
+  // placeholderOption.selected = false;
+  // placeholderOption.hidden = true;
+  // projectSelect.appendChild(placeholderOption);
 
   // Add all project options
   projects.forEach((project) => {
@@ -180,12 +209,43 @@ function handleAddTask() {
   }
 }
 
+
+function handleCreateProject() {
+  const projectName = document.querySelector("#project-name");
+  const projectColor = document.querySelector("#project-color");
+
+  const name = projectName.value.trim();
+  const color = projectColor.value.trim();
+
+  if(!name){
+    alert("Please fill the field")
+  }
+
+  try {
+    // let nm = 
+    createProject(name, color);
+    // console.log(nm)
+    hideProjectModal()
+    populateProjectSelect()
+  } catch (error) {
+     console.log(error.message);
+  }
+}
+
+
 function handleSidebarClick(e) {
+  const projectItem = e.target.closest(".project-item");
+
+  if(projectItem){
+    handleProjectClick(e, projectItem);
+    return;
+  }
   const target = e.target.closest(".sidebar__nav-list--item");
   if (!target) return;
 
+  
   e.preventDefault();
-  console.log(target);
+  // console.log(target);
   document.querySelectorAll(".sidebar__nav-item").forEach((item) => {
     item.classList.remove("active");
   });
@@ -193,8 +253,14 @@ function handleSidebarClick(e) {
   target.closest(".sidebar__nav-item").classList.add("active");
   // console.log(items)
   const text = target.querySelector("span:last-child").textContent;
+  console.log(text)
 
-  switch (text) {
+   document.querySelectorAll(".project-item").forEach(item=>{
+  item.classList.remove("active")
+ })
+
+  
+    switch (text) {
     case "All Tasks":
       showAllTasks();
       break;
@@ -208,6 +274,34 @@ function handleSidebarClick(e) {
       showCompletedTasks();
     default:
   }
+  
+}
+
+function handleProjectClick(e, projectItem){
+  e.preventDefault()
+ console.log("clicked");
+
+ document.querySelectorAll(".sidebar__nav-item").forEach((item) => {
+    item.classList.remove("active");
+  });
+
+
+ document.querySelectorAll(".project-item").forEach(item=>{
+  item.classList.remove("active")
+ })
+
+ projectItem.classList.add("active");
+
+ const projectName = projectItem.querySelector(".project-item__text")?.textContent || projectItem.textContent.trim();
+const projectId = projectItem.dataset.idProject;
+console.log(projectId)
+
+//Set cur project for context
+currentProjectId = projectId;
+currentView ="project"
+ showProjectTasks(projectName,projectId)
+
+
 }
 
 function showAllTasks() {
@@ -228,9 +322,56 @@ function showAllTasks() {
     });
   });
   renderTodos(allTodos);
+ 
 }
-function showTodayTasks() {}
-function showUpcomingTasks() {}
+function showTodayTasks() {
+  currentView = "today";
+  currentProjectTitle.textContent = "Today";
+
+  let todayTodos = [];
+  let today = new Date().toISOString().split("T")[0];
+  console.log(today);
+  let projects = getAllProjects();
+
+  projects.forEach((project) => {
+    const todos = getTodosInProject(project.id);
+    todos.forEach((todo) => {
+      if(today === todo.dueDate){
+        todayTodos.push({
+        ...todo,
+        projectId: project.id,
+        projectName: project.name,
+      });
+      }
+    });
+  });
+
+  renderTodos(todayTodos)
+}
+
+function showUpcomingTasks() {
+  currentView = "upcoming";
+  currentProjectTitle.textContent = "Upcoming Tasks";
+
+  const upcomingTodos =[];
+  const projects = getAllProjects();
+  const today = new Date().toISOString().split("T");
+
+  projects.forEach(project=>{
+    const todos = getTodosInProject(project.id);
+    todos.forEach((todo)=>{
+       if(today < todo.dueDate){
+        upcomingTodos.push({
+          ...todo,
+          projectId: project.id,
+          projectName: project.name
+        })
+       }
+    })
+  })
+
+  renderTodos(upcomingTodos)
+}
 function showCompletedTasks() {}
 
 function renderTodos(todos) {
@@ -266,15 +407,70 @@ function renderTodos(todos) {
   currentProjectTitle.insertAdjacentElement("afterend", todoListEl);
 }
 
+// function renderProjectTodos(){
+
+// }
+function showProjectTasks(projectName, projectId){
+  currentView = "project";
+  currentProjectId = projectId
+  currentProjectTitle.textContent = projectName;
+
+ 
+  const projects = getAllProjects();
+  console.log(projects)
+  const targetProject = projects.find(project => project.id == projectId || project.name == projectName);
+
+ const projectTodos = getTodosInProject(targetProject.id);
+
+ const projectWithTodosInfo = projectTodos.map(todo =>({
+  ...todo,
+  projectName: todo.name,
+  projectId: todo.id
+ }))
+
+renderTodos(projectWithTodosInfo)
+
+
+}
+function renderProjectItem (){
+ 
+  // const projectList = document.querySelector("#project-list");
+  
+  if(!projectList) return;
+  projectList.innerHTML = ""
+
+  const projects = getAllProjects();
+
+  // console.log(projects, " testing here")
+
+
+  projects.forEach(project=>{
+    const li = document.createElement("li");
+    li.className = "project-item";
+    li.dataset.idProject = project.id;
+    li.innerHTML = `
+            <a href="#" class="project-link">
+               <span class="mdi mdi-pound"></span>
+               <span>${project.name}</span>
+             </a>
+       
+    `
+    projectList.appendChild(li)
+  })
+
+
+}
+
+
 function createTodoElement(todo) {
   const li = document.createElement("li");
   li.className = `todo-item priority-${todo.priority.toLowerCase()}`;
 
-  if(todo.completed){
+  if (todo.completed) {
     li.classList.add("completed");
   }
 
-  // console.log(li)
+ 
   li.innerHTML = `
   <div class="todo-content">
    <div class="todo-header">
@@ -293,42 +489,43 @@ function createTodoElement(todo) {
      <span class="mdi mdi-pencil"></span>
    </button>
 
-    <button class="todo-delete-btn" data-todo-id="${todo.id}"  data-project-id="${todo.projectId}">
+    <button class="todo-delete-btn" data-todo-id="${
+      todo.id
+    }"  data-project-id="${todo.projectId}">
       <span class="mdi mdi-delete"></span>
    </button>
 
    </div>
   `;
 
-const todoCheckbox = li.querySelector(".todo-checkbox");
-const todoDelBtn = li.querySelector(".todo-delete-btn");
+  const todoCheckbox = li.querySelector(".todo-checkbox");
+  const todoDelBtn = li.querySelector(".todo-delete-btn");
 
-todoCheckbox.addEventListener("change", handleTodoToggle)
-todoDelBtn.addEventListener("click", handleTodoDelete)
+  todoCheckbox.addEventListener("change", handleTodoToggle);
+  todoDelBtn.addEventListener("click", handleTodoDelete);
 
   return li;
 }
 
-
-
-function handleTodoToggle(e){
-
+function handleTodoToggle(e) {
   const todoId = e.target.dataset.todoId;
-  const projectId = e.target.dataset.projectId
+  const projectId = e.target.dataset.projectId;
   const checked = e.target.checked;
   setTodoCompleted(projectId, todoId, checked);
-  refreshCurrentView()
-
+  refreshCurrentView();
 }
 
 function handleTodoDelete(e) {
   const projectId = e.target.closest(".todo-delete-btn").dataset.projectId;
   const todoId = e.target.closest(".todo-delete-btn").dataset.todoId;
-  if(confirm("Are you sure you want to delete this Task?")){
+  if (confirm("Are you sure you want to delete this Task?")) {
     deleteTodo(projectId, todoId);
-    refreshCurrentView()
+    refreshCurrentView();
   }
 }
+
+
+
 
 function refreshCurrentView() {
   switch (currentView) {
@@ -344,5 +541,15 @@ function refreshCurrentView() {
     case "completed":
       showCompletedTasks();
       break;
+    case "project":
+      if(currentProjectId) {
+        const projects = getAllProjects();
+        const currentProject = projects.find(project => project.id === currentProjectId);
+        showProjectTasks(currentProject.name, currentProject.id)
+      }
   }
+
+  
+  // console.log(renderProjectItem() + " project")
 }
+// renderProjectItem()

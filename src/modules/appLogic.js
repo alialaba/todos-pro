@@ -6,20 +6,20 @@ let projects = []; // This array will hold all your project objects
 function ensureDefaultProject() {
     // Check if we have any projects
     if (projects.length === 0) {
-        const defaultProject = new Project("Default", "blue");
+        const defaultProject = new Project("Default 👋", "blue");
         projects.push(defaultProject);
         return defaultProject;
     }
     
     // Check if we have a "Default" project
-    const defaultProject = projects.find(p => p.name === "Default");
-    if (!defaultProject) {
-        const newDefaultProject = new Project("Default", "blue");
-        projects.unshift(newDefaultProject); // Add at the beginning
-        return newDefaultProject;
-    }
+    // const defaultProject = projects.find(p => p.name === "Default");
+    // if (!defaultProject) {
+    //     const newDefaultProject = new Project("Default", "blue");
+    //     projects.unshift(newDefaultProject); // Add at the beginning
+    //     return newDefaultProject;
+    // }
     
-    return defaultProject;
+    // return defaultProject;
 }
 
 function initializeAppData() {
@@ -45,8 +45,8 @@ function initializeAppData() {
 
 function createDefaultData() {
   // 1. Create the "Default" project instance (changed from "Default Project")
-  const defaultProject = new Project("Default", "blue");
-  projects.push(defaultProject); // Add it to your main projects array
+  // const defaultProject = new Project("Default", "blue");
+  // projects.push(defaultProject); // Add it to your main projects array
 
   // 2. Create sample Todo items
   /*
