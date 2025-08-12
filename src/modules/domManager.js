@@ -372,7 +372,55 @@ function showUpcomingTasks() {
 
   renderTodos(upcomingTodos)
 }
-function showCompletedTasks() {}
+function showCompletedTasks() {
+
+  currentView = "completed";
+  currentProjectTitle.textContent = "Completed";
+
+  const completedTodos = [];
+  const projects = getAllProjects();
+
+  projects.forEach(project =>{
+    const todos = getTodosInProject(project.id);
+    todos.forEach(todo=>{
+      if(todo.completed){
+        completedTodos.push({
+          ...todo,
+          projectId: project.id,
+          projectName: project.name
+        })
+      }
+    })
+  })
+
+  renderTodos(completedTodos);
+
+}
+
+
+
+function showProjectTasks(projectName, projectId){
+  currentView = "project";
+  currentProjectId = projectId
+  currentProjectTitle.textContent = projectName;
+
+ 
+  const projects = getAllProjects();
+  console.log(projects)
+  const targetProject = projects.find(project => project.id == projectId || project.name == projectName);
+
+ const projectTodos = getTodosInProject(targetProject.id);
+
+ const projectWithTodosInfo = projectTodos.map(todo =>({
+  ...todo,
+  projectName: targetProject.name,
+  projectId: targetProject.id
+ }))
+
+renderTodos(projectWithTodosInfo)
+
+
+}
 
 function renderTodos(todos) {
   const existingList = document.querySelector(".todo-list");
@@ -407,31 +455,7 @@ function renderTodos(todos) {
   currentProjectTitle.insertAdjacentElement("afterend", todoListEl);
 }
 
-// function renderProjectTodos(){
 
-// }
-function showProjectTasks(projectName, projectId){
-  currentView = "project";
-  currentProjectId = projectId
-  currentProjectTitle.textContent = projectName;
-
- 
-  const projects = getAllProjects();
-  console.log(projects)
-  const targetProject = projects.find(project => project.id == projectId || project.name == projectName);
-
- const projectTodos = getTodosInProject(targetProject.id);
-
- const projectWithTodosInfo = projectTodos.map(todo =>({
-  ...todo,
-  projectName: todo.name,
-  projectId: todo.id
- }))
-
-renderTodos(projectWithTodosInfo)
-
-
-}
 function renderProjectItem (){
  
   // const projectList = document.querySelector("#project-list");
@@ -468,10 +492,16 @@ function createTodoElement(todo) {
 
   if (todo.completed) {
     li.classList.add("completed");
-  }
+    li.innerHTML = `
 
- 
-  li.innerHTML = `
+  <div>
+    <p>You: Completed a task${todo.title}</p>
+    <span>${todo.projectName}</span>
+  </div>
+  
+  `
+  } else {
+     li.innerHTML = `
   <div class="todo-content">
    <div class="todo-header">
     <input type="checkbox"  class="todo-checkbox" ${
@@ -496,13 +526,26 @@ function createTodoElement(todo) {
    </button>
 
    </div>
-  `;
+  `
+  }
+
+  
+
 
   const todoCheckbox = li.querySelector(".todo-checkbox");
   const todoDelBtn = li.querySelector(".todo-delete-btn");
 
-  todoCheckbox.addEventListener("change", handleTodoToggle);
-  todoDelBtn.addEventListener("click", handleTodoDelete);
+
+  
+  if(todoCheckbox) {
+     todoCheckbox.addEventListener("change", handleTodoToggle);
+  }
+
+  if(todoDelBtn) {
+   todoDelBtn.addEventListener("click", handleTodoDelete);
+  }
+ 
+  
 
   return li;
 }
@@ -550,6 +593,5 @@ function refreshCurrentView() {
   }
 
   
-  // console.log(renderProjectItem() + " project")
+ 
 }
-// renderProjectItem()
