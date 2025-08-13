@@ -20,7 +20,7 @@ const cancelProjectBtn = document.querySelector("#btn-cancel-project");
 const createProjectBtn = document.querySelector("#btn-add-project");
 const currentProjectTitle = document.querySelector("#current-project-title");
 const toggleProject = document.querySelector("#toggle-project");
-  const projectList = document.querySelector("#project-list");
+const projectList = document.querySelector("#project-list");
 
 let currentView = ""; // Track current view: "all", "today", "upcoming", "completed", or project ID
 let currentProjectId = null;
@@ -34,9 +34,7 @@ export function initializeDOM() {
 function setupEventListeners() {
   addProject.addEventListener("click", showProjectModal);
   cancelProjectBtn.addEventListener("click", hideProjectModal);
-  createProjectBtn.addEventListener("click",  handleCreateProject);
-
-
+  createProjectBtn.addEventListener("click", handleCreateProject);
 
   addBtn.addEventListener("click", showTaskModal);
   cancelBtn.addEventListener("click", hideTaskModal);
@@ -51,15 +49,14 @@ function setupEventListeners() {
     if (e.target === projectModal) hideProjectModal();
   });
 
-
-    // toggleProject.addEventListener("click", showToggleProjectItem);
+  // toggleProject.addEventListener("click", showToggleProjectItem);
   // toggleProject.addEventListener("click", ()=>{
   //   const isNavRight = toggleProject.classList.contains("mdi-chevron-right");
   //     toggleProject.classList.toggle("mdi-chevron-right", !isNavRight);
   //     toggleProject.classList.toggle("mdi-chevron-down", isNavRight)
   // })
 
-  toggleProject.addEventListener("click", showToggleProjectItem)
+  toggleProject.addEventListener("click", showToggleProjectItem);
 }
 
 function showTaskModal() {
@@ -101,15 +98,13 @@ function clearProjectModalInputs() {
   });
 }
 
+function showToggleProjectItem() {
+  //  console.log("clicked")
+  const isNavRight = toggleProject.classList.contains("mdi-chevron-right");
 
-function showToggleProjectItem(){
-
-    //  console.log("clicked")
-    const isNavRight = toggleProject.classList.contains("mdi-chevron-right");
-
-    toggleProject.classList.toggle("mdi-chevron-right", !isNavRight);
-    toggleProject.classList.toggle("mdi-chevron-down", isNavRight)
-    projectList.classList.toggle("hidden-project")
+  toggleProject.classList.toggle("mdi-chevron-right", !isNavRight);
+  toggleProject.classList.toggle("mdi-chevron-down", isNavRight);
+  projectList.classList.toggle("hidden-project");
 }
 
 function populateProjectSelect() {
@@ -118,8 +113,8 @@ function populateProjectSelect() {
 
   // Ensure we have at least a Default project
   ensureDefaultProject();
-  renderProjectItem()
-  
+  renderProjectItem();
+
   const projects = getAllProjects();
 
   // Clear existing options
@@ -209,7 +204,6 @@ function handleAddTask() {
   }
 }
 
-
 function handleCreateProject() {
   const projectName = document.querySelector("#project-name");
   const projectColor = document.querySelector("#project-color");
@@ -217,33 +211,31 @@ function handleCreateProject() {
   const name = projectName.value.trim();
   const color = projectColor.value.trim();
 
-  if(!name){
-    alert("Please fill the field")
+  if (!name) {
+    alert("Please fill the field");
   }
 
   try {
-    // let nm = 
+    // let nm =
     createProject(name, color);
     // console.log(nm)
-    hideProjectModal()
-    populateProjectSelect()
+    hideProjectModal();
+    populateProjectSelect();
   } catch (error) {
-     console.log(error.message);
+    console.log(error.message);
   }
 }
-
 
 function handleSidebarClick(e) {
   const projectItem = e.target.closest(".project-item");
 
-  if(projectItem){
+  if (projectItem) {
     handleProjectClick(e, projectItem);
     return;
   }
   const target = e.target.closest(".sidebar__nav-list--item");
   if (!target) return;
 
-  
   e.preventDefault();
   // console.log(target);
   document.querySelectorAll(".sidebar__nav-item").forEach((item) => {
@@ -253,14 +245,13 @@ function handleSidebarClick(e) {
   target.closest(".sidebar__nav-item").classList.add("active");
   // console.log(items)
   const text = target.querySelector("span:last-child").textContent;
-  console.log(text)
+  console.log(text);
 
-   document.querySelectorAll(".project-item").forEach(item=>{
-  item.classList.remove("active")
- })
+  document.querySelectorAll(".project-item").forEach((item) => {
+    item.classList.remove("active");
+  });
 
-  
-    switch (text) {
+  switch (text) {
     case "All Tasks":
       showAllTasks();
       break;
@@ -274,34 +265,32 @@ function handleSidebarClick(e) {
       showCompletedTasks();
     default:
   }
-  
 }
 
-function handleProjectClick(e, projectItem){
-  e.preventDefault()
- console.log("clicked");
+function handleProjectClick(e, projectItem) {
+  e.preventDefault();
+  console.log("clicked");
 
- document.querySelectorAll(".sidebar__nav-item").forEach((item) => {
+  document.querySelectorAll(".sidebar__nav-item").forEach((item) => {
     item.classList.remove("active");
   });
 
+  document.querySelectorAll(".project-item").forEach((item) => {
+    item.classList.remove("active");
+  });
 
- document.querySelectorAll(".project-item").forEach(item=>{
-  item.classList.remove("active")
- })
+  projectItem.classList.add("active");
 
- projectItem.classList.add("active");
+  const projectName =
+    projectItem.querySelector(".project-item__text")?.textContent ||
+    projectItem.textContent.trim();
+  const projectId = projectItem.dataset.idProject;
+  console.log(projectId);
 
- const projectName = projectItem.querySelector(".project-item__text")?.textContent || projectItem.textContent.trim();
-const projectId = projectItem.dataset.idProject;
-console.log(projectId)
-
-//Set cur project for context
-currentProjectId = projectId;
-currentView ="project"
- showProjectTasks(projectName,projectId)
-
-
+  //Set cur project for context
+  currentProjectId = projectId;
+  currentView = "project";
+  showProjectTasks(projectName, projectId);
 }
 
 function showAllTasks() {
@@ -314,15 +303,16 @@ function showAllTasks() {
   projects.forEach((project) => {
     let todos = getTodosInProject(project.id);
     todos.forEach((todo) => {
-      allTodos.push({
-        ...todo,
-        projectId: project.id,
-        projectName: project.name,
-      });
+      if (!todo.completed) {
+        allTodos.push({
+          ...todo,
+          projectId: project.id,
+          projectName: project.name,
+        });
+      }
     });
   });
   renderTodos(allTodos);
- 
 }
 function showTodayTasks() {
   currentView = "today";
@@ -336,90 +326,95 @@ function showTodayTasks() {
   projects.forEach((project) => {
     const todos = getTodosInProject(project.id);
     todos.forEach((todo) => {
-      if(today === todo.dueDate){
+      if (today === todo.dueDate && !todo.completed) {
         todayTodos.push({
-        ...todo,
-        projectId: project.id,
-        projectName: project.name,
-      });
+          ...todo,
+          projectId: project.id,
+          projectName: project.name,
+        });
       }
     });
   });
 
-  renderTodos(todayTodos)
+  renderTodos(todayTodos);
 }
 
 function showUpcomingTasks() {
   currentView = "upcoming";
   currentProjectTitle.textContent = "Upcoming Tasks";
 
-  const upcomingTodos =[];
+  const upcomingTodos = [];
   const projects = getAllProjects();
   const today = new Date().toISOString().split("T");
 
-  projects.forEach(project=>{
+  projects.forEach((project) => {
     const todos = getTodosInProject(project.id);
-    todos.forEach((todo)=>{
-       if(today < todo.dueDate){
+    todos.forEach((todo) => {
+      if (today < todo.dueDate && !todo.completed) {
         upcomingTodos.push({
           ...todo,
           projectId: project.id,
-          projectName: project.name
-        })
-       }
-    })
-  })
+          projectName: project.name,
+        });
+      }
+    });
+  });
 
-  renderTodos(upcomingTodos)
+  renderTodos(upcomingTodos);
 }
 function showCompletedTasks() {
-
   currentView = "completed";
   currentProjectTitle.textContent = "Completed";
 
   const completedTodos = [];
   const projects = getAllProjects();
 
-  projects.forEach(project =>{
+  projects.forEach((project) => {
     const todos = getTodosInProject(project.id);
-    todos.forEach(todo=>{
-      if(todo.completed){
+    todos.forEach((todo) => {
+      if (todo.completed) {
         completedTodos.push({
           ...todo,
           projectId: project.id,
-          projectName: project.name
-        })
+          projectName: project.name,
+        });
       }
-    })
-  })
+    });
+  });
 
   renderTodos(completedTodos);
-
 }
 
-
-
-function showProjectTasks(projectName, projectId){
+function showProjectTasks(projectName, projectId) {
   currentView = "project";
-  currentProjectId = projectId
+  currentProjectId = projectId;
   currentProjectTitle.textContent = projectName;
 
- 
   const projects = getAllProjects();
-  console.log(projects)
-  const targetProject = projects.find(project => project.id == projectId || project.name == projectName);
+  console.log(projects);
+  const targetProject = projects.find(
+    (project) => project.id == projectId || project.name == projectName
+  );
 
- const projectTodos = getTodosInProject(targetProject.id);
+  
+  const projectTodos = getTodosInProject(targetProject.id);
+    
 
- const projectWithTodosInfo = projectTodos.map(todo =>({
-  ...todo,
-  projectName: targetProject.name,
-  projectId: targetProject.id
- }))
+// console.log(projectTodos)
+  // const projectWithTodosInfo = projectTodos.map(todo  => ({
+  //   ...todo,
+  //   projectName: targetProject.name,
+  //   projectId: targetProject.id,
+  // }));
 
-renderTodos(projectWithTodosInfo)
+  const projectWithTodosInfo = projectTodos.filter(todo => !todo.completed).map((todo)=>({
+     ...todo,
+     projectName: targetProject.name,
+     projectId: targetProject.id
 
-
+  }))
+  
+  renderTodos(projectWithTodosInfo);
 }
 
 function renderTodos(todos) {
@@ -447,6 +442,9 @@ function renderTodos(todos) {
     todoListEl.appendChild(textEl);
   } else {
     todos.forEach((todo) => {
+      if (todo.completed) {
+        console.log("remove completed task");
+      }
       let todoItemEl = createTodoElement(todo);
       todoListEl.appendChild(todoItemEl);
     });
@@ -455,20 +453,17 @@ function renderTodos(todos) {
   currentProjectTitle.insertAdjacentElement("afterend", todoListEl);
 }
 
-
-function renderProjectItem (){
- 
+function renderProjectItem() {
   // const projectList = document.querySelector("#project-list");
-  
-  if(!projectList) return;
-  projectList.innerHTML = ""
+
+  if (!projectList) return;
+  projectList.innerHTML = "";
 
   const projects = getAllProjects();
 
   // console.log(projects, " testing here")
 
-
-  projects.forEach(project=>{
+  projects.forEach((project) => {
     const li = document.createElement("li");
     li.className = "project-item";
     li.dataset.idProject = project.id;
@@ -478,30 +473,37 @@ function renderProjectItem (){
                <span>${project.name}</span>
              </a>
        
-    `
-    projectList.appendChild(li)
-  })
-
-
+    `;
+    projectList.appendChild(li);
+  });
 }
-
 
 function createTodoElement(todo) {
   const li = document.createElement("li");
-  li.className = `todo-item priority-${todo.priority.toLowerCase()}`;
+  li.className = `todo-item`;
 
   if (todo.completed) {
     li.classList.add("completed");
     li.innerHTML = `
 
-  <div>
-    <p>You: Completed a task${todo.title}</p>
-    <span>${todo.projectName}</span>
+  <div class="completed-todo-content">
+     <div class="completed-todo__left">
+     <span class="mdi mdi-account-check-outline"></span>
+      <div>
+      <p>You: Completed a task <a href="#">${todo.title}</a></p>
+      <span>11:00am</span>
+      </div>
+       </div>
+    
+        <div>
+            <span>${todo.projectName}</span>
+        </div>
   </div>
   
-  `
+  `;
   } else {
-     li.innerHTML = `
+    li.className = `todo-item priority-${todo.priority.toLowerCase()}`;
+    li.innerHTML = `
   <div class="todo-content">
    <div class="todo-header">
     <input type="checkbox"  class="todo-checkbox" ${
@@ -526,26 +528,19 @@ function createTodoElement(todo) {
    </button>
 
    </div>
-  `
+  `;
   }
-
-  
-
 
   const todoCheckbox = li.querySelector(".todo-checkbox");
   const todoDelBtn = li.querySelector(".todo-delete-btn");
 
-
-  
-  if(todoCheckbox) {
-     todoCheckbox.addEventListener("change", handleTodoToggle);
+  if (todoCheckbox) {
+    todoCheckbox.addEventListener("change", handleTodoToggle);
   }
 
-  if(todoDelBtn) {
-   todoDelBtn.addEventListener("click", handleTodoDelete);
+  if (todoDelBtn) {
+    todoDelBtn.addEventListener("click", handleTodoDelete);
   }
- 
-  
 
   return li;
 }
@@ -567,9 +562,6 @@ function handleTodoDelete(e) {
   }
 }
 
-
-
-
 function refreshCurrentView() {
   switch (currentView) {
     case "all":
@@ -585,13 +577,12 @@ function refreshCurrentView() {
       showCompletedTasks();
       break;
     case "project":
-      if(currentProjectId) {
+      if (currentProjectId) {
         const projects = getAllProjects();
-        const currentProject = projects.find(project => project.id === currentProjectId);
-        showProjectTasks(currentProject.name, currentProject.id)
+        const currentProject = projects.find(
+          (project) => project.id === currentProjectId
+        );
+        showProjectTasks(currentProject.name, currentProject.id);
       }
   }
-
-  
- 
 }

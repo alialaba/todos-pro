@@ -21,9 +21,11 @@ button{
     color: #f4f4f4;
 }
 a{
-    text-decoration: none;
-    color: #ddd;
+    
+    color: #333;
 }
+
+
 .on-hover{
     display: none;
 }
@@ -153,6 +155,12 @@ input:focus{
 
 .sidebar__nav-item.active a {
     color: white;
+}
+
+
+.task-list a, .project-list a{
+ color: #ddd;
+ text-decoration: none;
 }
 
 /* Modal improvements */
@@ -392,9 +400,9 @@ input:focus{
 
 /* Completed Todo Styling */
 .todo-item.completed {
-    opacity: 0.6;
+    /* opacity: 0.6;
     text-decoration: line-through;
-    background-color: #e9ecef;
+    background-color: #e9ecef; */
 }
 
 #add-todo-btn {
@@ -410,4 +418,29 @@ input:focus{
 
 #add-todo-btn:hover {
     background-color: #0056b3;
+}
+
+
+.completed-todo-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4em;
+}
+.completed-todo__left{
+    display: flex;
+    gap: 1em;
+}
+.completed-todo__left span.mdi-account-check-outline{
+    font-size: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.completed-todo__project-name{
+    /* align-self: self-end; */
 }
