@@ -7,6 +7,7 @@ import {
   createProject,
   moveTaskToProject,
   ensureDefaultProject,
+  initializeAppData,
 } from "./appLogic.js";
 
 const addBtn = document.querySelector("#add-task");
@@ -28,7 +29,10 @@ let currentProjectId = null;
 export function initializeDOM() {
   setupEventListeners();
   populateProjectSelect();
+  initializeAppData()
   //  renderProjectItem()
+
+  showAllTasks()
 }
 
 function setupEventListeners() {
@@ -112,7 +116,7 @@ function populateProjectSelect() {
   if (!projectSelect) return;
 
   // Ensure we have at least a Default project
-  ensureDefaultProject();
+  // ensureDefaultProject();
   renderProjectItem();
 
   const projects = getAllProjects();
@@ -199,6 +203,8 @@ function handleAddTask() {
     createTodo(selectedProjectId, todoDetails);
     clearTaskModalInputs();
     hideTaskModal();
+
+    refreshCurrentView();
   } catch (error) {
     console.log(error.message);
   }
@@ -209,10 +215,11 @@ function handleCreateProject() {
   const projectColor = document.querySelector("#project-color");
 
   const name = projectName.value.trim();
-  const color = projectColor.value.trim();
+  const color = projectColor.value.trim() || "blue";
 
   if (!name) {
     alert("Please fill the field");
+    return
   }
 
   try {
@@ -245,12 +252,13 @@ function handleSidebarClick(e) {
   target.closest(".sidebar__nav-item").classList.add("active");
   // console.log(items)
   const text = target.querySelector("span:last-child").textContent;
-  console.log(text);
+  // console.log(text);
 
   document.querySelectorAll(".project-item").forEach((item) => {
     item.classList.remove("active");
   });
 
+  currentProjectId = null;
   switch (text) {
     case "All Tasks":
       showAllTasks();
@@ -269,7 +277,6 @@ function handleSidebarClick(e) {
 
 function handleProjectClick(e, projectItem) {
   e.preventDefault();
-  console.log("clicked");
 
   document.querySelectorAll(".sidebar__nav-item").forEach((item) => {
     item.classList.remove("active");
@@ -282,10 +289,10 @@ function handleProjectClick(e, projectItem) {
   projectItem.classList.add("active");
 
   const projectName =
-    projectItem.querySelector(".project-item__text")?.textContent ||
+    projectItem.querySelector(".project-item__text")?.textContent?.trim() ||
     projectItem.textContent.trim();
   const projectId = projectItem.dataset.idProject;
-  console.log(projectId);
+  // console.log(projectId);
 
   //Set cur project for context
   currentProjectId = projectId;
@@ -345,12 +352,12 @@ function showUpcomingTasks() {
 
   const upcomingTodos = [];
   const projects = getAllProjects();
-  const today = new Date().toISOString().split("T");
+  const today = new Date().toISOString().split("T")[0];
 
   projects.forEach((project) => {
     const todos = getTodosInProject(project.id);
     todos.forEach((todo) => {
-      if (today < todo.dueDate && !todo.completed) {
+      if ( todo.dueDate > today && !todo.completed) {
         upcomingTodos.push({
           ...todo,
           projectId: project.id,
@@ -391,7 +398,7 @@ function showProjectTasks(projectName, projectId) {
   currentProjectTitle.textContent = projectName;
 
   const projects = getAllProjects();
-  console.log(projects);
+  // console.log(projects);
   const targetProject = projects.find(
     (project) => project.id == projectId || project.name == projectName
   );
@@ -400,20 +407,13 @@ function showProjectTasks(projectName, projectId) {
   const projectTodos = getTodosInProject(targetProject.id);
     
 
-// console.log(projectTodos)
-  // const projectWithTodosInfo = projectTodos.map(todo  => ({
-  //   ...todo,
-  //   projectName: targetProject.name,
-  //   projectId: targetProject.id,
-  // }));
-
   const projectWithTodosInfo = projectTodos.filter(todo => !todo.completed).map((todo)=>({
      ...todo,
      projectName: targetProject.name,
      projectId: targetProject.id
 
   }))
-  
+
   renderTodos(projectWithTodosInfo);
 }
 
@@ -436,15 +436,13 @@ function renderTodos(todos) {
   todoListEl.appendChild(taskTextEl);
 
   if (todos.length == 0) {
-    let textEl = document.createElement("p");
-    textEl.textContent = "No Available Todo";
-    textEl.style.textAlign = "center";
-    todoListEl.appendChild(textEl);
+   let textEl = document.createElement("p");
+        textEl.textContent = "No Available Todo";
+      textEl.style.textAlign = "center";
+      todoListEl.appendChild(textEl);
+    
   } else {
     todos.forEach((todo) => {
-      if (todo.completed) {
-        console.log("remove completed task");
-      }
       let todoItemEl = createTodoElement(todo);
       todoListEl.appendChild(todoItemEl);
     });
@@ -482,12 +480,24 @@ function createTodoElement(todo) {
   const li = document.createElement("li");
   li.className = `todo-item`;
 
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const days = ["Sunday" ,"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  const now = new Date()
+  const curDay = now.getDay() 
+  const date = now.getDate()
+  const curMonth = now.getMonth() ;
+
   if (todo.completed) {
     li.classList.add("completed");
     li.innerHTML = `
 
+    <div>
+    <p>${date}, ${months[curMonth]} - ${days[curDay]}</p>
+   
   <div class="completed-todo-content">
+   
      <div class="completed-todo__left">
+    
      <span class="mdi mdi-account-check-outline"></span>
       <div>
       <p>You: Completed a task <a href="#">${todo.title}</a></p>
@@ -498,6 +508,7 @@ function createTodoElement(todo) {
         <div>
             <span>${todo.projectName}</span>
         </div>
+           </div>
   </div>
   
   `;

@@ -3,11 +3,76 @@ import { Todo } from "./todo.js";
 import { Project } from "./project.js";
 let projects = []; // This array will hold all your project objects
 
+let STORAGE_KEY = "taskpro_projects_data";
+function saveProjectsToLocalStorage(projects){
+  try {
+    const projectsData = JSON.stringify(projects);
+    localStorage.setItem(STORAGE_KEY, projectsData);
+    console.log("Data save to localstorage successfully")
+  } catch (error) {
+    console.log("error in saving",error.message);
+  }
+}
+
+// Converts plain JavaScript objects back into proper Todos and Project Instances
+function reconstructProjectsFromStorage (rawData) {
+
+  if(!rawData || !Array.isArray(rawData)){
+    return [];
+  }
+
+  return rawData.map(projectData=>{
+    const project = new Project(projectData.name, projectData.color)
+    project.id =projectData.id;
+
+    if(projectData.todos && Array.isArray(projectData.todos)) {
+      projectData.todos.forEach(todoData=>{
+        const todo = new Todo(
+          todoData.title,
+          todoData.description,
+          todoData.dueDate,
+          todoData.priority,
+          todoData.notes  || "",
+          todoData.checkList || []
+        );
+
+        todo.id = todoData.id;
+        todo.completed = todoData.completed || false;
+        todo.dueDate = todoData.dueDate;
+
+        project.todos.push(todo);
+      })
+    }
+    return project;
+  })
+
+}
+
+function loadProjectsFromLocalStorage(){
+  try {
+    const projectsData = localStorage.getItem(STORAGE_KEY);
+    if(!projectsData) {
+      console.log("No data found")
+      return null
+    }
+    const parseData = JSON.parse(projectsData);
+    const reconstructedProjects = reconstructProjectsFromStorage(parseData);
+
+
+    return reconstructedProjects;
+  } catch (error) {
+    console.log(error.message)
+    return null;
+  }
+}
+
+
 function ensureDefaultProject() {
     // Check if we have any projects
     if (projects.length === 0) {
         const defaultProject = new Project("Default 👋", "blue");
         projects.push(defaultProject);
+        saveProjectsToLocalStorage(projects)
         return defaultProject;
     }
     
@@ -44,6 +109,7 @@ function initializeAppData() {
 }
 
 function createDefaultData() {
+  projects = []
   // 1. Create the "Default" project instance (changed from "Default Project")
   // const defaultProject = new Project("Default", "blue");
   // projects.push(defaultProject); // Add it to your main projects array
@@ -110,16 +176,8 @@ function createDefaultData() {
   // saveProjectsToLocalStorage(projects); // Placeholder for Day 4
 }
 
-// Placeholder for Day 4 functions
-function loadProjectsFromLocalStorage() {
-  // For Day 1, simply return null or an empty array
-  return null;
-}
 
-function saveProjectsToLocalStorage(data) {
-  // For Day 1, this can be an empty function
-  console.log("Saving to local storage (placeholder for Day 4):", data);
-}
+
 
 function findProjectById(projectId) {
   return projects.find((project) => project.id === projectId);
@@ -141,6 +199,7 @@ function createTodo(projectId, todoDetails) {
   );
 
   project.addTodo(newTodo);
+  saveProjectsToLocalStorage(projects);
   return newTodo;
 }
 
@@ -153,7 +212,7 @@ function deleteTodo(projectId, todoId){
         const wasDeleted = project.todos.length < originalLength;
         
         if(wasDeleted) {
-            // In Day 4, you'll add: saveProjectsToLocalStorage(projects);
+           saveProjectsToLocalStorage(projects)
             return true;
         }
     }
@@ -167,6 +226,7 @@ function setTodoCompleted(projectId, todoId, status) {
         const todo = project.getTodoId(todoId); // Fixed method name
         if(todo){
             todo.completed = status; // Direct assignment or use todo.toggleCompletion()
+            saveProjectsToLocalStorage(projects)
             return true;
         }
     }
@@ -182,6 +242,7 @@ function changeTodoPriority(projectId, todoId, newPriority) {
 
         if(todo){
             todo.setPriority(newPriority); // Using the method defined in Todo class
+            saveProjectsToLocalStorage(projects)
             return true;
         }
     }
@@ -191,6 +252,8 @@ function changeTodoPriority(projectId, todoId, newPriority) {
 function createProject(projectName, projectColor = "blue") {
     const newProject = new Project(projectName, projectColor);
     projects.push(newProject);
+
+    saveProjectsToLocalStorage(projects)
     return newProject; // Return the new project for UI updates
 }
 
